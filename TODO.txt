@@ -1,0 +1,24 @@
+Create medium AI that draws to a high chance winning number
+
+Create hard that accounts for your hand when drawing
+
+Create extreme that remembers the last 10 cards and uses this to have a better idea if to draw or not
+
+Create a cheater that can count cards
+
+Impliment a money scheme:
+- lots for dealer
+- little for AI at desk
+- if dealer looses game over
+- if AI looses up difficulty
+
+Impliment more then 1 AI vs player
+
+Implement boss AI with various tasks
+- happy about wins
+- Mad about losses
+- Wanting you to catch cheaters
+
+
+Give signs to cheaters that aren't always 100%
+

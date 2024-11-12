@@ -152,11 +152,13 @@ while play:
                 player_hand.clear()
                 ai_hand.clear()
                 play = play_again()
-                continue
+                bust = True
 
             else:
                 hit = input('Do you want to hit? ')
                 stay_stand = carry_on(hit)
+    if bust:
+        continue
 
     player_value = functions.hand_value(player_hand)
 

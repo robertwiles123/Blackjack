@@ -1,3 +1,6 @@
+from uu import Error
+
+
 def hand_value(hand):
     aces = 0
     values = [c[:2] for c in hand]
@@ -43,6 +46,7 @@ def draw_card(hand, deck, discard_pile, start=False, ai=None):
             draw = deck[:2]
             ai.extend(draw)
             del deck[0:2]
+
 
         return hand, deck, discard_pile, ai
 

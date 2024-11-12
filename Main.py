@@ -1,5 +1,7 @@
 from uu import Error
 from random import shuffle
+import ai
+import functions
 
 # builds a dict of cards
 def build_deck():
@@ -52,59 +54,6 @@ def shuffle_cards(primary, discard = False):
     shuffle(shuffled_deck)
     return shuffled_deck
 
-def draw_card(hand, deck, discard_pile, start=False, ai=False):
-    if start == True:
-        if len(deck) < 4:
-            deck = shuffle_cards(primary=deck, discard=discard_pile)
-            discard_pile = list()
-        draw = deck[:2]
-        hand.extend(draw)
-        del deck[0:2]
-        draw = deck[:2]
-        ai.extend(draw)
-        del deck[0:2]
-        return  hand, deck, discard_pile, ai_hand
-
-    else:
-        if len(deck) < 1:
-            deck = shuffle_cards(primary=deck, discard=discard_pile)
-            discard_pile = list()
-        draw = deck[0:1]
-        hand.extend(draw)
-        del deck[0:1]
-
-    return hand, deck, discard_pile
-
-def hand_value(hand):
-    aces = 0
-    values = [c[:2] for c in hand]
-    values = [x.replace(" ", "") for x in values]
-
-    for x in values:
-        if x in ['Ki', 'Qu', 'Ja']:
-            values.remove(x)
-            values.insert(0 ,10)
-        elif x == 'Ac':
-            aces = aces + 1
-            values.remove(x)
-            values.insert(0, 0)
-
-    values = [int(x) for x in values]
-    if aces == 0:
-        return  sum(values)
-    else:
-        ones = 0
-        for x in range(aces):
-            value = sum(values) + (11 * aces) + ones
-            if value <= 21:
-                return value
-            else:
-                ones = ones + 1
-                aces = aces - 1
-                if aces <= 0:
-                    value = sum(values) + ones
-                    return value
-
 def carry_on(con):
 
     check = False
@@ -124,13 +73,6 @@ def play_again():
     con = input('Do you want to play again? ')
     outcome = carry_on(con)
     return outcome
-
-def easy_ai(hand,deck, discard):
-    value = hand_value(hand)
-    while value < 14:
-        hand, deck, discard = draw_card(hand=hand, deck=deck, discard_pile=discard)
-        value = hand_value(hand)
-    return hand, deck, discard
 
 
 main_deck = build_deck()
@@ -153,24 +95,31 @@ con = input('Do you want to play? ')
 
 play = carry_on(con)
 
-if con:
+if con[0].lower() == 'y':
     print('Lets go!')
 else:
     print('That\'s too bad')
 
 while play:
-    player_hand, shuffled_deck, discard_pile, ai_hand = draw_card(hand=player_hand, deck=shuffled_deck, discard_pile=discard_pile, start=True, ai=ai_hand)
+
+    player_hand, shuffled_deck, discard_pile, ai_hand = functions.draw_card(hand=player_hand, deck=shuffled_deck, discard_pile=discard_pile, start=True, ai=ai_hand)
 
     print(f'Your hand is {player_hand}')
-    ai_hand, shuffled_deck, discard_pile = easy_ai(ai_hand, shuffled_deck, discard_pile)
+    ai_hand, shuffled_deck, discard_pile = ai.easy_ai(ai_hand, shuffled_deck, discard_pile)
     print(f'Your opponent hand is: {ai_hand}')
     blackjack = False
-    ai_value = hand_value(ai_hand)
-    player_value = hand_value(player_hand)
+    ai_value = functions.hand_value(ai_hand)
+    player_value = functions.hand_value(player_hand)
     if ai_value > 21:
         print('Opponent went bust, you win!')
         blackjack = True
         player_win +=1
+        print(f'You have won {player_win} times.')
+        print(f'Your opponent has won {ai_win} times')
+        player_hand.clear()
+        ai_hand.clear()
+        play = play_again()
+        continue
 
     if (player_value == 21 and len(player_hand) == 2) or (ai_value == 21 and len(ai_hand) == 2):
         if (ai_value == 21 and len(ai_hand) == 2) and (player_value == 21 and len(player_hand) == 2):
@@ -191,19 +140,29 @@ while play:
         while stay_stand:
             if stay_stand:
 
-                player_hand, deck, discard_pile = draw_card(player_hand, shuffled_deck, discard_pile=discard_pile)
+                player_hand, deck, discard_pile = functions.draw_card(player_hand, shuffled_deck, discard_pile=discard_pile)
                 print(f'Your new hand is {player_hand}')
-            value = hand_value(player_hand)
+            value = functions.hand_value(player_hand)
             if value > 21:
                 print(f'You went bust your total is {value}')
                 stay_stand = False
+                ai_win += 1
+                print(f'You have won {player_win} times.')
+                print(f'Your opponent has won {ai_win} times')
+                player_hand.clear()
+                ai_hand.clear()
+                play = play_again()
+                continue
+
             else:
                 hit = input('Do you want to hit? ')
                 stay_stand = carry_on(hit)
 
-    player_value = hand_value(player_hand)
+    player_value = functions.hand_value(player_hand)
 
-    if player_value > 21:
+    if blackjack:
+        continue
+    elif player_value > 21:
         print('You loose!')
         ai_win +=1
     elif ai_value == player_value:

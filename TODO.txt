@@ -1,3 +1,6 @@
+Known bugs:
+- when going bust next hand for player is always 0 value
+
 Create medium AI that draws to a high chance winning number
 
 Create hard that accounts for your hand when drawing

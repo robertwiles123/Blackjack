@@ -102,6 +102,8 @@ else:
 
 while play:
 
+    bust = False
+
     player_hand, shuffled_deck, discard_pile, ai_hand = functions.draw_card(hand=player_hand, deck=shuffled_deck, discard_pile=discard_pile, start=True, ai=ai_hand)
 
     print(f'Your hand is {player_hand}')
